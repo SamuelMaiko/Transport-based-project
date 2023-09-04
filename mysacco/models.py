@@ -19,6 +19,11 @@ class Sacco(Base):
     
     all_shuttles=relationship('Shuttle', backref=backref('its_sacco'))
     all_members=association_proxy('all_shuttles','its_owner', creator=lambda me: Shuttle(its_owner=me))
+    
+    def __repr__(self):
+        return f"ID= {self.id} | "+\
+               f"NAME= {self.name} | " +\
+               f"MANAGER= {self.manager}"
 
 class Shuttle(Base):
     
@@ -31,6 +36,11 @@ class Shuttle(Base):
     owner_id=Column(Integer(), ForeignKey('members.id'))
     created_at=Column(DateTime(), server_default=func.now())
     updated_at=Column(DateTime(), onupdate=func.now())
+    
+    def __repr__(self):
+        return f"ID= {self.id} | "+\
+               f"TYPE= {self.type} | " +\
+               f"NUMBER_PLATE= {self.number_plate}"
     
     
 class Member(Base):
@@ -45,3 +55,9 @@ class Member(Base):
     
     all_shuttles=relationship('Shuttle', backref=backref('its_owner'))
     all_saccos=association_proxy('all_shuttles','its_sacco', creator=lambda sa: Shuttle(its_sacco=sa))
+
+    
+    def __repr__(self):
+        return f"ID= {self.id} | "+\
+               f"FIRST_NAME= {self.first_name} | " +\
+               f"LAST_NAME= {self.last_name}"
