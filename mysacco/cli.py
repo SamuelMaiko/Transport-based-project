@@ -49,7 +49,7 @@ def deletesacco(name_):
 @click.argument('new_manager')
 def changemanager(name_, new_manager):
     '''
-    Changes the manager of a database
+    Changes the manager of a sacco
     Args:
         name_(str): The Sacco's name
         new_manager(str): New Manager's name
@@ -103,7 +103,7 @@ def showsaccovehicles(sacco_name):
     session=Session()
     
     s_sacco=session.query(Sacco).filter(Sacco.name==sacco_name).first()
-    s_vehicles=session.query(Shuttle).filter(Shuttle.sacco_id==s_sacco.id).all()
+    s_vehicles=session.query(Vehicle).filter(Vehicle.sacco_id==s_sacco.id).all()
 
     session.commit()
     click.echo("Here are the sacco's vehicles:")
@@ -143,7 +143,7 @@ def knowowner(plate_no):
     '''
     session=Session()
     
-    vehicle=session.query(Shuttle).filter(Shuttle.number_plate==plate_no).first()
+    vehicle=session.query(Vehicle).filter(Vehicle.number_plate==plate_no).first()
     
     session.commit()
     click.echo(f"The owner is : {vehicle.its_owner.first_name} {vehicle.its_owner.last_name}.")
@@ -160,7 +160,7 @@ def showtype(plate_no):
     '''
     session=Session()
     
-    vehicle=session.query(Shuttle).filter(Shuttle.number_plate==plate_no).first()
+    vehicle=session.query(Vehicle).filter(Vehicle.number_plate==plate_no).first()
     
     session.commit()
     click.echo(f"The vehicle's type : {vehicle.type}")
@@ -177,7 +177,7 @@ def showvehiclesoftype(the_type):
     '''
     session=Session()
     
-    vehicle=session.query(Shuttle).filter(Shuttle.type==the_type).all()
+    vehicle=session.query(Vehicle).filter(Vehicle.type==the_type).all()
     
     session.commit()
     click.echo("Here are the vehicles of that type!")
@@ -198,7 +198,7 @@ def showallvehicles():
     '''
     session=Session()
     
-    vehicles=session.query(Shuttle).all()
+    vehicles=session.query(Vehicle).all()
     
     session.commit()
     click.echo("Here are the vehicles and their owners")
@@ -218,7 +218,7 @@ def knowsacco(plate_no):
     '''
     session=Session()
     
-    vehicle=session.query(Shuttle).filter(Shuttle.number_plate==plate_no).first()
+    vehicle=session.query(Vehicle).filter(Vehicle.number_plate==plate_no).first()
     
     session.commit()
     click.echo(f"Belongs to : {vehicle.its_sacco.name} sacco.")
@@ -239,7 +239,7 @@ def changeowner(plate_no,firstname, lastname):
     '''
     session=Session()
     
-    vehicle=session.query(Shuttle).filter(Shuttle.number_plate==plate_no).first()
+    vehicle=session.query(Vehicle).filter(Vehicle.number_plate==plate_no).first()
     owner_id1=vehicle.owner_id
     session.query(Member).filter(Member.id==owner_id1).update({
                                     Member.first_name: firstname,
@@ -292,7 +292,7 @@ def find_sacco(st_sacco):
 def addnewvehicle():
     vehicle_details=dict(type=input("Input the vehicle type: "),plate_number=input("Input the plate number? :"))
     click.echo("Details successfully saved!")
-    new_vehic=Shuttle(type=vehicle_details["type"], number_plate=vehicle_details["plate_number"])
+    new_vehic=Vehicle(type=vehicle_details["type"], number_plate=vehicle_details["plate_number"])
     session=Session()
     session.add(new_vehic)
     
@@ -310,7 +310,7 @@ def addnewvehicle():
         the_sacco=find_sacco(st_sacco)
         
         session=Session()
-        spec_shuttle=session.query(Shuttle).filter(Shuttle.number_plate==vehicle_details["plate_number"]).first()
+        spec_shuttle=session.query(Vehicle).filter(Vehicle.number_plate==vehicle_details["plate_number"]).first()
         spec_shuttle.its_owner=new_m_obj
         spec_shuttle.its_sacco=the_sacco
         session.commit()
@@ -328,7 +328,7 @@ def addnewvehicle():
         the_sacco2=find_sacco(st_sacco2)
         
         session=Session()
-        spec_shuttle2=session.query(Shuttle).filter(Shuttle.number_plate==vehicle_details["plate_number"]).first()
+        spec_shuttle2=session.query(Vehicle).filter(Vehicle.number_plate==vehicle_details["plate_number"]).first()
         spec_shuttle2.its_owner=exist_m_obj
         spec_shuttle2.its_sacco=the_sacco2
         session.commit()
@@ -339,7 +339,6 @@ def addnewvehicle():
   
 session.close()
 if __name__ =="__main__":
-    # main.add_command(greet)
     main.add_command(addsacco)
     main.add_command(deletesacco)
     main.add_command(changemanager)
@@ -355,11 +354,6 @@ if __name__ =="__main__":
     main.add_command(changeowner)
     main.add_command(showallowners)
     main.add_command(addnewvehicle)
-    # main.add_command(addsacco)
-    # main.add_command(deletesacco)
-    # main.add_command(changemanager)
-    # main.add_command(knowowner)
-    # main.add_command(showallsaccos)
-    
+        
     
     main()
