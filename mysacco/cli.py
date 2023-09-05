@@ -1,5 +1,5 @@
 import click
-from models import Sacco, Member, Shuttle, engine
+from models import Sacco, Member, Vehicle, engine
 from sqlalchemy import and_
 from sqlalchemy.orm import sessionmaker
 
@@ -9,17 +9,6 @@ session=Session()
 @click.group()
 def main():
     pass
-
-# @click.command()
-# @click.argument('comp')
-# @click.option('--name',"-n", default='John', help='The name to greet.')
-# @click.option('--greeting',"-g", default="Hi there", help="Greets the user")
-# def greet(comp, name, greeting):
-#     '''This is supposed to say Hello to someone'''
-    
-#     message=f"{comp}! {greeting}, {name}"
-#     click.echo(message)
-
 # COMMAND 1//////////////
 @click.command()
 @click.argument('name_')

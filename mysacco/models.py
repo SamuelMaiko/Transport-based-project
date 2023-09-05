@@ -17,17 +17,17 @@ class Sacco(Base):
     created_at=Column(DateTime(), server_default=func.now())
     updated_at=Column(DateTime(), onupdate=func.now())
     
-    all_shuttles=relationship('Shuttle', backref=backref('its_sacco'))
-    all_members=association_proxy('all_shuttles','its_owner', creator=lambda me: Shuttle(its_owner=me))
+    all_vehicles=relationship('Vehicle', backref=backref('its_sacco'))
+    all_members=association_proxy('all_vehicles','its_owner', creator=lambda me: Vehicle(its_owner=me))
     
     def __repr__(self):
         return f"ID= {self.id} | "+\
                f"NAME= {self.name} | " +\
                f"MANAGER= {self.manager}"
 
-class Shuttle(Base):
+class Vehicle(Base):
     
-    __tablename__='shuttles'
+    __tablename__='vehicles'
     
     id= Column(Integer(), primary_key=True)
     type=Column(String())
@@ -53,8 +53,8 @@ class Member(Base):
     created_at=Column(DateTime(), server_default=func.now())
     updated_at=Column(DateTime(), onupdate=func.now())
     
-    all_shuttles=relationship('Shuttle', backref=backref('its_owner'))
-    all_saccos=association_proxy('all_shuttles','its_sacco', creator=lambda sa: Shuttle(its_sacco=sa))
+    all_vehicles=relationship('Vehicle', backref=backref('its_owner'))
+    all_saccos=association_proxy('all_vehicles','its_sacco', creator=lambda sa: Vehicle(its_sacco=sa))
 
     
     def __repr__(self):
