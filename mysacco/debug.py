@@ -9,7 +9,10 @@ fake=Faker()
 
 Session=sessionmaker(bind=engine)
 session=Session()
+
 # session.query(Sacco).delete()
+# session.query(Shuttle).delete()
+# session.query(Member).delete()
 
 # ADDING 10 RANDOM NAMES TO THE DATABASE///////////////////
 # random_members=[Member(first_name=fake.first_name(), last_name=fake.last_name()) for n in range(10)]
@@ -44,8 +47,9 @@ session=Session()
 # session.bulk_save_objects(random_shuttles)
 
 
-random_shuttle=session.query(Shuttle).filter(Shuttle.id==3).first()
-print(random_shuttle.its_sacco)
+# RANDOM TESTING
+# random_shuttle=session.query(Shuttle).filter(Shuttle.id==3).first()
+# print(random_shuttle.its_sacco)
 
 
 session.commit()

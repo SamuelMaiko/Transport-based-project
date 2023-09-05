@@ -31,7 +31,6 @@ def addsacco(name_, manager_):
         name_(str): The Sacco's nameo
         manager_(str): The manager of the Sacco
     '''
-    
     session=Session()
     new_sacco=Sacco(name=name_, manager=manager_)
     session.add(new_sacco)
@@ -137,9 +136,10 @@ def showallsaccos():
     '''
     session=Session()
     allsaccos=session.query(Sacco).all()
-
+    
     session.commit()
-    click.echo([f"Name: {each.name}  -  Manager: {each.manager}" for each in allsaccos])
+    for each in allsaccos:
+        click.echo(f"Sacco: {each.name}     --  Manager: {each.manager}")
 # COMMAND /////////////////////////////////SHUTTLE
 
 
@@ -182,7 +182,7 @@ def showtype(plate_no):
 @click.argument('the_type')
 def showvehiclesoftype(the_type):
     '''
-    Shows the vehicles of the input type
+    Shows the vehicles of the inputted type
     Args:
         the_type(str): The Vehicle's type
     '''
@@ -261,31 +261,7 @@ def changeowner(plate_no,firstname, lastname):
     
   # COMMAND ///////////////////////////////// 
 
-@click.command()
-@click.option('--plate_no',"-p")
-@click.option('--firstname',"-f")
-@click.option('--lastname',"-l")
-def changeowner(plate_no,firstname, lastname):
-    '''
-    Changes the vehicles owner
-    Args:
-        plate_no(str): The Vehicle's plate number
-        
-    
-    '''
-    session=Session()
-    
-    vehicle=session.query(Shuttle).filter(Shuttle.number_plate==plate_no).first()
-    owner_id1=vehicle.owner_id
-    session.query(Member).filter(Member.id==owner_id1).update({
-                                    Member.first_name: firstname,
-                                    Member.last_name: lastname
-                                        })
-    session.commit()
-    click.echo(f"Name of the owner changed successfully to {firstname} {lastname}!")
-    
-    
-  # COMMAND ///////////////////////////////// 
+
 
 @click.command()
 def showallowners():
@@ -305,33 +281,43 @@ def showallowners():
         click.echo(f"{each.first_name} {each.last_name}")
     
   # COMMAND ///////////////////////////////// 
+  
+#   JUST A FUNCTION HELPING THE COMMNAD BELOW IT
 def find_sacco(st_sacco):
     if st_sacco=="new":
             new_sacco=dict(name=input("Input the sacco's name: "),
                         manager=input("Input the manager's name: "))
+            click.echo("Details successfully saved!")
             new_s_obj=Sacco(name=new_sacco["name"], manager=new_sacco["manager"])
             return new_s_obj
     elif st_sacco=="exist":
         sacco_name=(input("Input the sacco name: "))
+        click.echo("Okay proceed!")
         session=Session()
         exist_sacco=session.query(Sacco).filter(Sacco.name==sacco_name).first()
         session.commit()
         return exist_sacco
+    
+    
 @click.command()
 def addnewvehicle():
     vehicle_details=dict(type=input("Input the vehicle type: "),plate_number=input("Input the plate number? :"))
+    click.echo("Details successfully saved!")
     new_vehic=Shuttle(type=vehicle_details["type"], number_plate=vehicle_details["plate_number"])
     session=Session()
     session.add(new_vehic)
     
     session.commit()
     status=input("Is the owner new or exists in the records? (new/exist): ")
+    click.echo("Okay proceed!")
     if status=="new":
         new_member=dict(first_name=input("Input the first name: "),
                         last_name=input("Input the last name: "))
+        click.echo("Details successfully saved!")
         new_m_obj=Member(first_name=new_member["first_name"], last_name=new_member["last_name"])
         
         st_sacco=input("Want to add to which Sacco? (new/exist): ")
+        click.echo("Okay proceed!")
         the_sacco=find_sacco(st_sacco)
         
         session=Session()
@@ -343,11 +329,13 @@ def addnewvehicle():
     elif status=="exist":
         exist_member=dict(first_name=input("Input the first name: "),
                         last_name=input("Input the last name: "))
+        click.echo("Details successfully saved!")
         session=Session()
         exist_m_obj=session.query(Member).filter(and_(Member.first_name==exist_member["first_name"],Member.last_name==exist_member["last_name"])).first()
         session.commit()
         
         st_sacco2=input("Want to add to which Sacco? (new/exist): ")
+        click.echo("Okay proceed!")
         the_sacco2=find_sacco(st_sacco2)
         
         session=Session()
