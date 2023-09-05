@@ -1,5 +1,6 @@
 import click
 from models import Sacco, Member, Shuttle, engine
+from sqlalchemy import and_
 from sqlalchemy.orm import sessionmaker
 
 Session=sessionmaker(bind=engine)
@@ -299,11 +300,65 @@ def showallowners():
     
     s_members=session.query(Member).all()
     session.commit()
-    click.echo("Here are all the members: ")
+    click.echo("Here are all the members: "  )
     for each in s_members:
         click.echo(f"{each.first_name} {each.last_name}")
     
   # COMMAND ///////////////////////////////// 
+def find_sacco(st_sacco):
+    if st_sacco=="new":
+            new_sacco=dict(name=input("Input the sacco's name: "),
+                        manager=input("Input the manager's name: "))
+            new_s_obj=Sacco(name=new_sacco["name"], manager=new_sacco["manager"])
+            return new_s_obj
+    elif st_sacco=="exist":
+        sacco_name=(input("Input the sacco name: "))
+        session=Session()
+        exist_sacco=session.query(Sacco).filter(Sacco.name==sacco_name).first()
+        session.commit()
+        return exist_sacco
+@click.command()
+def addnewvehicle():
+    vehicle_details=dict(type=input("Input the vehicle type: "),plate_number=input("Input the plate number? :"))
+    new_vehic=Shuttle(type=vehicle_details["type"], number_plate=vehicle_details["plate_number"])
+    session=Session()
+    session.add(new_vehic)
+    
+    session.commit()
+    status=input("Is the owner new or exists in the records? (new/exist): ")
+    if status=="new":
+        new_member=dict(first_name=input("Input the first name: "),
+                        last_name=input("Input the last name: "))
+        new_m_obj=Member(first_name=new_member["first_name"], last_name=new_member["last_name"])
+        
+        st_sacco=input("Want to add to which Sacco? (new/exist): ")
+        the_sacco=find_sacco(st_sacco)
+        
+        session=Session()
+        spec_shuttle=session.query(Shuttle).filter(Shuttle.number_plate==vehicle_details["plate_number"]).first()
+        spec_shuttle.its_owner=new_m_obj
+        spec_shuttle.its_sacco=the_sacco
+        session.commit()
+            
+    elif status=="exist":
+        exist_member=dict(first_name=input("Input the first name: "),
+                        last_name=input("Input the last name: "))
+        session=Session()
+        exist_m_obj=session.query(Member).filter(and_(Member.first_name==exist_member["first_name"],Member.last_name==exist_member["last_name"])).first()
+        session.commit()
+        
+        st_sacco2=input("Want to add to which Sacco? (new/exist): ")
+        the_sacco2=find_sacco(st_sacco2)
+        
+        session=Session()
+        spec_shuttle2=session.query(Shuttle).filter(Shuttle.number_plate==vehicle_details["plate_number"]).first()
+        spec_shuttle2.its_owner=exist_m_obj
+        spec_shuttle2.its_sacco=the_sacco2
+        session.commit()
+        
+        
+    else:
+        click.echo("Input the right details")  
   
 session.close()
 if __name__ =="__main__":
@@ -322,7 +377,7 @@ if __name__ =="__main__":
     main.add_command(showallvehicles)
     main.add_command(changeowner)
     main.add_command(showallowners)
-    # main.add_command(showallsaccos)
+    main.add_command(addnewvehicle)
     # main.add_command(addsacco)
     # main.add_command(deletesacco)
     # main.add_command(changemanager)
